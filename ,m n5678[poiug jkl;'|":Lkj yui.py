@@ -31,16 +31,21 @@ class Chessboard:
         borders = [(-1 , -2) , (-2 , -1) , (-2 , 1) , (-1 , 2) , (1 , 2) , (2 , 1) , (2 , -1 ) , (1 , -2)]
         for l, r in borders:
             if self.height > x + l >= 0 and self.width > y + r >= 0 :
-                pos = Chessboard.get_pos(x + l , y + r , self.width)
-                if pos not in self.visited:
-                    neighbors.append(pos)
+                npos = Chessboard.get_pos(x + l , y + r , self.width)
+                try:
+                    if npos not in self.visited and self.preds[str(npos)] != pos:
+                        neighbors.append(npos)
+                    elif self.preds[str(npos)] == pos:
+                        print(npos)
+                except KeyError:
+                    neighbors.append(npos)
 
         return neighbors 
 
 
     def heuristics(self , neighbors) -> int:
         if len(neighbors) == 0:
-            raise ValueError
+            return -1
         
         min = [9 , 0] # maximum number of adjacent fields is 8
         for field in neighbors:
@@ -65,23 +70,44 @@ class Chessboard:
 
         neighbors = ['dummy :)']
 
-        for i in range(0, 1000):
-            
+        for i in range(0, 100):
+
             self.preds[str(new_pos)] = old_pos
             self.visited.add(old_pos)
 
             neighbors = self.get_neighbors(new_pos)
-            try:
-                old_pos = new_pos
-                new_pos = self.heuristics(neighbors)
+            
+            old_pos = new_pos
+            new_pos = self.heuristics(neighbors)
+            # print('haloc' + str(new_pos))
 
-            except ValueError:
+            
+
+            if new_pos == -1:
                 output = []
                 if len(self.visited) == self.size:
                     output = self.backtrace(old_pos)
-                self.preds = {}
-                self.visited = set()
-                return output
+                    self.preds = {}
+                    self.visited = set()
+                    return output
+                else:
+                    old_temp = old_pos
+                    self.visited.add(old_pos)
+                    #here we have to return back so we can find another way
+                    while neighbors == []:
+                        temp = self.preds[str(old_temp)]
+                        # print(old_temp)
+                        # print(temp)
+                        #print(self.visited)
+                        self.visited.remove(old_temp)
+                        old_temp = temp
+                        neighbors = self.get_neighbors(temp)
+                        # print(neighbors)
+                    print('returned to:' + str(temp))
+                    new_pos = temp
+                    old_pos = self.preds[str(new_pos)]
+                    
+                
 
     def find_way(self):
         for  i in range(0 , self.size):
