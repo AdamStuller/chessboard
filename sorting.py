@@ -1,4 +1,6 @@
 
 
-arr = [(4 , 32) , (3 , 4) , (5 , 4)]
-print(sorted(arr , key=lambda item: item[0]))
+mamka = set([1 , 2 , 3 , 4 , 5])
+mamka.discard(1)
+
+print(mamka)
