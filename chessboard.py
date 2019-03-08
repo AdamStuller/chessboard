@@ -1,3 +1,4 @@
+from node import Node
 class Chessboard:
 
     """Returns x coordinate from position and width"""
@@ -15,30 +16,38 @@ class Chessboard:
     def get_pos(x : int, y : int, width : int) -> int :
         return y * width + x
 
-    # def set_arrs(self):
-    #     self.preds = [ -1 for x in range(0 , self.size)]  
-    #     self.front = [ [] for x in range(0 , self.size)]
-    #     self.visited = set()
+    def get_final_state(self):
+        f = 0 
+        for i in range(0 , self.size):
+            f |= 1 << i
+        return f
+
+    def init_arrs(self):
+        self.preds = {}
+        self.front = []
 
     def __init__(self , width , height ):
         self.width = width
         self.height = height
         self.size = width * height
-        self.preds = {}
-        self.front = []
+        self.init_arrs()
+        self.finalstate = self.get_final_state()
+       
 
-    def get_neighbors(self , pos):
-        x = Chessboard.get_x(pos , self.width)
-        y = Chessboard.get_y(pos , self.width)
+    def get_neighbors(self ,old_node):
+
+        x = Chessboard.get_x(old_node.pos , self.width)
+        y = Chessboard.get_y(old_node.pos , self.width)
         neighbors = []
        
-        #Checking borders
         borders = [(-1 , -2) , (-2 , -1) , (-2 , 1) , (-1 , 2) , (1 , 2) , (2 , 1) , (2 , -1 ) , (1 , -2)]
         for l, r in borders:
             if self.height > x + l >= 0 and self.width > y + r >= 0 :
                 npos = Chessboard.get_pos(x + l , y + r , self.width)
-                if npos not in self.visited:
-                    neighbors.append(npos)
+                
+                if not old_node.visited(npos):
+                    new_node = Node(npos , old_node.node_id , self.size)
+                    neighbors.append(new_node)
 
         return neighbors 
 
@@ -49,49 +58,41 @@ class Chessboard:
         
         new_list = map(lambda x: (x , len(self.get_neighbors(x))) , neighbors)
             
-        return list (map( lambda x : x[0], list(  sorted( new_list , key = lambda x: x[1]))))
+        return list (map( lambda x : x[0], list(  reversed(sorted( new_list , key = lambda x: x[1])))))  
 
-    def depth_first_search(self , start):
+    def backtrace(self , node_id ):
+        output = []
+        while node_id != 0:
+            output.append(Node.get_pos(node_id , self.size))
+            node_id = self.preds[str(node_id)]
+        return list(reversed(output))
+         
+
+    def depth_first_search(self , start , limit):
+        self.init_arrs()
+        self.front.append(Node(start , 0 , self.size))
+
+        for i in range(0 , limit) :
+            
+            if not self.front:
+                break
+            curr = self.front.pop()
+            
+            self.preds[str(curr.node_id)] = curr.pred_id
+            
+            if self.finalstate == curr.state:
+                return self.backtrace(curr.node_id )
+            
+            neighbors = self.heuristics(self.get_neighbors(curr))
+
+            for item in neighbors:
+                self.front.append(item)
+            
         
-        # self.set_arrs()
-        i = 0
-        self.front[i] = [start]
-        # print(self.front)
-        for limit in range(0 , 1000):
-            # print(limit)
-            # print(self.preds[i])
-            # print(i)
-
-            while i >=0 and not self.front[i] :
-                self.visited.remove(self.preds[i])
-                self.preds[i] = -1
-                i -= 1
-                # print('removed')
-
-            if i < 0 :
-                return False
-
-            self.preds[i] = self.front[i].pop(0)
-            self.visited.add(self.preds[i])
-            children = self.heuristics(self.get_neighbors(self.preds[i]))
-
-            if children:
-                i += 1
-                self.front[i] = children
-            elif len(self.visited) == self.size:
-                return self.preds
-            elif self.preds[i] >= 0:
-                self.visited.remove(self.preds[i])
-                self.preds[i] = -1
-                i -= 1
-                # print('removed')
         
             
 
-saska = Chessboard(5 , 5)
+saska = Chessboard(100 , 100)
 
 for i in range(0 , saska.size):
-    out = saska.depth_first_search(i)
-    print('output:' + str(out) )
-    # print('set: ' + str(saska.visited) )
-
+    print(saska.depth_first_search(i , 10000))
