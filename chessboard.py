@@ -1,4 +1,5 @@
 from node import Node
+import config
 class Chessboard:
 
     """Returns x coordinate from position and width"""
@@ -87,12 +88,33 @@ class Chessboard:
 
             for item in neighbors:
                 self.front.append(item)
-            
-        
-        
-            
 
-saska = Chessboard(100 , 100)
+        return []
 
-for i in range(0 , saska.size):
-    print(saska.depth_first_search(i , 10000))
+    def get_tours(self ):
+
+        limit = config.get('limit')
+
+        for i in range(0 , self.size):
+            out = self.depth_first_search(i , limit)
+            if out:
+                print('Start: ' + str(i) + ', Output: ' + str(out))
+                # print(list(map(lambda x: out.index(out.index(x) , out)))
+            else:
+                print('Start: ' + str(i) + ' has no tour or could not be found')
+        
+
+    # def print_board(self , output):
+    #     new_output = list(map(lambda x : output[x] , output))
+    #     for i in range(0 , self.size):
+    #         if not i % self.width:
+    #             print('\n-----------------------')
+    #             print('|' ,end = ' ')
+    #         print(new_output[i] , end=" | ")
+             
+            
+    
+my_chessboard = Chessboard(config.get('width') , config.get('height'))
+# my_chessboard.print_board(my_chessboard.get_tours())
+my_chessboard.get_tours()
+
