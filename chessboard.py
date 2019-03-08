@@ -99,7 +99,7 @@ class Chessboard:
             out = self.depth_first_search(i , limit)
             if out:
                 print('Start: ' + str(i) + ', Output: ' + str(out))
-                # print(list(map(lambda x: out.index(out.index(x) , out)))
+                print(list(map(lambda x:out.index(x) , range(0 . self.size))))
             else:
                 print('Start: ' + str(i) + ' has no tour or could not be found')
         
