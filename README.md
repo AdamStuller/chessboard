@@ -5,7 +5,7 @@ This repository contains that solves euler's horse problem by implementing searc
 Specifically `depth first search`. It uses `Warnsdorff’s heuristic` for making the search more
 efficient. Check the documentation for closer look at the algorithm implemented.
 
-#Usage
+# Usage
 
 Requirements.txt file is empty since no external libraries were used. Python interpreter 
 used was **python3.7**. Before running programme check config.py and change it to modify 
