@@ -3,11 +3,7 @@
 __config_values = {
     "limit" : 10000,
     "width" : 5,
-    "height": 5
+    "height": 5,
+    "print_board" : True,
+    "heuristics" : True
 }
-
-def get(key: str): 
-    try:
-        return __config_values[key]
-    except KeyError:
-        return False
