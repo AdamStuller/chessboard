@@ -25,5 +25,5 @@ python3.7 -m venv ./venv
 
 And then, after modifying config run:
 ```
-./venv/bin/python3.7 ./chessboard.py
+./venv/bin/python3.7 ./src/chessboard.py
 ```

@@ -1,5 +1,5 @@
-from node import Node
-from config import __config_values as config
+from src.node import Node
+from src.config import __config_values as config
 
 class Chessboard:
 
