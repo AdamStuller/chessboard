@@ -1,7 +1,8 @@
 __config_values = {
-    "limit" : 10000,
-    "width" : 5,
-    "height": 5,
+    "limit" : 100000,
+    "width" : 8,
+    "height": 8,
     "print_board" : True,
-    "heuristics" : True
+    "heuristics" : True,
+    "test": True
 }

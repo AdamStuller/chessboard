@@ -1,5 +1,5 @@
-from src.node import Node
-from src.config import __config_values as config
+from node import Node
+from config import __config_values as config
 
 class Chessboard:
 
@@ -62,7 +62,7 @@ class Chessboard:
         self.__preds = {}
         self.__front = []
 
-    def __init__(self , width , height ):
+    def __init__(self, width, height ):
         self.__width = width
         self.__height = height
         self.__size = width * height
@@ -174,6 +174,11 @@ class Chessboard:
                 print('Start: ' + str(i) + ', Output: ' + str(out))
                 if config.get("print_board"):
                     self.print_board(list(map(lambda x: out.index(x) , range(0 , self.__size))))
+                if config.get("test"):
+                    if self.test_tour(out):
+                        print("Passed!")
+                    else:
+                        print("Did not pass!")
                 print()
             else:
                 print('Start: ' + str(i) + ' has no tour or could not be found')
@@ -191,6 +196,50 @@ class Chessboard:
                 print('|',end = ' ')
             print(output[i] , end=" | ")
         print('\n' + self.__width * '-----')
+
+
+    def get_neighboring_pos(self, pos, visited):
+        """
+        Method used only for testing purposes
+        :param pos: int
+            Position whose neighbors one wants to find
+        :param visited: set
+            Set of visited positions
+        :return: list
+            List of neighboring positions
+        """
+        x, y = Chessboard.get_x(pos, self.__width), Chessboard.get_y(pos, self.__width)
+
+        positions = []
+
+        operators = [(-1, -2), (-2, -1), (-2, 1), (-1, 2), (1, 2), (2, 1), (2, -1), (1, -2)]
+
+        for l, r in operators:
+            if self.__height > x + l >= 0 and self.__width > y + r >= 0:
+                npos = self.get_pos(x + l , y + r , self.__width)
+                if npos not in visited:
+                    positions.append(npos)
+
+        return positions
+
+    def test_tour(self, tour):
+        """
+        Method used for testing. Checks wheter output from search is valid euler's tour.
+        :param tour: list
+            Tour that is output of depth_first search
+        :return: bool
+            True if it is valid or false if it is not.
+        """
+        visited = set()
+        for i in range(0 , len(tour) - 1):
+            visited.add(tour[i])
+            if tour[i + 1] not in set([x for x in self.get_neighboring_pos(tour[i], visited)]):
+                return False
+        visited.add(tour[-1])
+        if len(visited) == len(tour):
+            return True
+        else:
+            return False
              
 
 
